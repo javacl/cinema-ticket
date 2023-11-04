@@ -18,17 +18,4 @@ open class BaseRemoteDataSource {
             )
         )
     }
-
-    protected fun checkApiResultNoBody(response: Response<Any>): ApiResult<Any> {
-        if (response.isSuccessful) {
-            return ApiResult.Success("")
-        }
-        val error = errorParser(response.errorBody()?.string())
-        return ApiResult.Error(
-            Exceptions.RemoteDataSourceException(
-                error.message,
-                response.code()
-            )
-        )
-    }
 }

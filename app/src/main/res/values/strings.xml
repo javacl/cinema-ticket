@@ -5,4 +5,7 @@
     <string name="error_general">A problem occurred!</string>
     <string name="error_connection">Connect to Internet</string>
 
+    <string name="label_retry">Retry</string>
+    <string name="label_i_realized">I realized</string>
+
 </resources>
