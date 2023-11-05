@@ -127,6 +127,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
+    // Coil
+    def coil_version = "2.4.0"
+    implementation "io.coil-kt:coil-compose:$coil_version"
+
     // KTX
     implementation "androidx.core:core-ktx:1.12.0"
 

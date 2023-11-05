@@ -73,6 +73,6 @@ object AppModule {
             MoshiConverterFactory.create(moshi)
         )
         .client(okHttpClient)
-        .baseUrl("https://run.mocky.io/v3")
+        .baseUrl("https://run.mocky.io/v3/")
         .build()
 }
