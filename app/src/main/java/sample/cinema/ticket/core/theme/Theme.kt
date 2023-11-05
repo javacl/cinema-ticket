@@ -19,7 +19,9 @@ private val darkColorScheme = darkColorScheme(
     background = md_theme_dark_background,
     onBackground = md_theme_dark_onBackground,
     surface = md_theme_dark_surface,
-    surfaceVariant = md_theme_dark_surfaceVariant
+    surfaceVariant = md_theme_dark_surfaceVariant,
+    error = md_theme_dark_error,
+    onError = md_theme_dark_onError
 )
 
 private val lightColorScheme = lightColorScheme(
@@ -30,7 +32,9 @@ private val lightColorScheme = lightColorScheme(
     background = md_theme_light_background,
     onBackground = md_theme_light_onBackground,
     surface = md_theme_light_surface,
-    surfaceVariant = md_theme_light_surfaceVariant
+    surfaceVariant = md_theme_light_surfaceVariant,
+    error = md_theme_light_error,
+    onError = md_theme_light_onError
 )
 
 @Composable

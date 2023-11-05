@@ -1,4 +1,4 @@
-package sample.cinema.ticket.features.ticket
+package sample.cinema.ticket.features.ticket.ui.cinema
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
