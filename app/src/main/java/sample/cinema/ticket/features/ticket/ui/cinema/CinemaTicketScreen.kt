@@ -1,11 +1,13 @@
 package sample.cinema.ticket.features.ticket.ui.cinema
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -44,6 +48,18 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import sample.cinema.ticket.R
+import sample.cinema.ticket.core.theme.w300
+import sample.cinema.ticket.core.theme.w400
+import sample.cinema.ticket.core.theme.w500
+import sample.cinema.ticket.core.theme.w600
+import sample.cinema.ticket.core.theme.w700
+import sample.cinema.ticket.core.theme.x1
+import sample.cinema.ticket.core.theme.x2
+import sample.cinema.ticket.core.theme.x3
+import sample.cinema.ticket.core.theme.x4
+import sample.cinema.ticket.core.theme.x6
+import sample.cinema.ticket.core.util.ui.AppCard
+import sample.cinema.ticket.features.ticket.data.model.CinemaTicketDayModel
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketSeatModel
 
 @Composable
@@ -53,7 +69,15 @@ fun CinemaTicketScreen(
 ) {
     val context = LocalContext.current
 
+    val selectedSeatList by viewModel.selectedSeatList.collectAsState(initial = null)
+
     val packedSeatList by viewModel.packedSeatList.collectAsState(initial = null)
+
+    val dayList by viewModel.dayList.collectAsState()
+    val selectedDay by viewModel.selectedDay.collectAsState()
+
+    val hourList by viewModel.hourList.collectAsState()
+    val selectedHour by viewModel.selectedHour.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -104,6 +128,14 @@ fun CinemaTicketScreen(
                 )
             }
         }
+
+        CinemaTicketCardItem(
+            selectedSeatList = selectedSeatList,
+            dayList = dayList,
+            selectedDay = selectedDay,
+            hourList = hourList,
+            selectedHour = selectedHour
+        )
     }
 }
 
@@ -194,5 +226,136 @@ fun CinemaTicketSeatListItem(
         painter = painterResource(id = R.drawable.ic_cinema_seat),
         contentDescription = null,
         tint = color
+    )
+}
+
+@Composable
+fun CinemaTicketCardItem(
+    selectedSeatList: List<CinemaTicketSeatModel>?,
+    dayList: List<CinemaTicketDayModel>,
+    selectedDay: CinemaTicketDayModel?,
+    hourList: List<String>,
+    selectedHour: String?
+) {
+    AppCard(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp)
+        ) {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 12.dp)
+            ) {
+                items(
+                    items = dayList
+                ) { item ->
+                    CinemaTicketDayListItem(
+                        item = item,
+                        selected = item == selectedDay
+                    )
+                }
+            }
+
+            LazyRow(
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 12.dp)
+            ) {
+                items(
+                    items = hourList
+                ) { item ->
+                    CinemaTicketHourListItem(
+                        item = item,
+                        selected = item == selectedHour
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CinemaTicketDayListItem(
+    item: CinemaTicketDayModel,
+    selected: Boolean
+) {
+    val modifier: Modifier
+    val contentColor: Color
+
+    if (selected) {
+
+        modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
+        contentColor = MaterialTheme.colorScheme.onSecondary
+
+    } else {
+
+        modifier = Modifier.border(
+            width = 0.1.dp,
+            color = MaterialTheme.colorScheme.secondary,
+            shape = MaterialTheme.shapes.large
+        )
+        contentColor = MaterialTheme.colorScheme.onSurface
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .clip(MaterialTheme.shapes.large)
+            .then(modifier)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = item.day,
+            style = MaterialTheme.typography.w600.x6,
+            color = contentColor
+        )
+
+        Text(
+            text = item.name,
+            style = MaterialTheme.typography.w300.x1,
+            color = contentColor
+        )
+    }
+}
+
+@Composable
+fun CinemaTicketHourListItem(
+    item: String,
+    selected: Boolean
+) {
+    val modifier: Modifier
+    val contentColor: Color
+
+    if (selected) {
+
+        modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
+        contentColor = MaterialTheme.colorScheme.onSecondary
+
+    } else {
+
+        modifier = Modifier.border(
+            width = 0.1.dp,
+            color = MaterialTheme.colorScheme.secondary,
+            shape = MaterialTheme.shapes.large
+        )
+        contentColor = MaterialTheme.colorScheme.onSurface
+    }
+
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .clip(MaterialTheme.shapes.large)
+            .then(modifier)
+            .padding(8.dp),
+        text = item,
+        style = MaterialTheme.typography.w500.x3,
+        color = contentColor
     )
 }

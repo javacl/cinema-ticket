@@ -15,7 +15,7 @@ import sample.cinema.ticket.core.util.extensions.appShadow
 fun AppCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable () -> Unit
 ) = Box(
     modifier = modifier

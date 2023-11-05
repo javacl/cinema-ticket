@@ -1,7 +1,6 @@
 package sample.cinema.ticket.features.main.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -15,9 +14,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import sample.cinema.ticket.core.theme.AppTheme
 import sample.cinema.ticket.core.util.snackBar.showAppSnackBar
+import sample.cinema.ticket.core.util.ui.BaseActivity
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
