@@ -25,6 +25,9 @@ class CinemaTicketViewModel @Inject constructor(
 
     val packedSeatList = seatList.map { it.splitIntoParts(2) }
 
+    private val _statusTypeList = MutableStateFlow(DataUtil.cinemaTicketStatusTypeList())
+    val statusTypeList = _statusTypeList.asStateFlow()
+
     private val _dayList = MutableStateFlow(DataUtil.cinemaTicketDayList())
     val dayList = _dayList.asStateFlow()
 

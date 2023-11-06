@@ -5,20 +5,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -55,6 +59,7 @@ import sample.cinema.ticket.core.theme.w500
 import sample.cinema.ticket.core.theme.w600
 import sample.cinema.ticket.core.theme.w700
 import sample.cinema.ticket.core.theme.x1
+import sample.cinema.ticket.core.theme.x2
 import sample.cinema.ticket.core.theme.x3
 import sample.cinema.ticket.core.theme.x6
 import sample.cinema.ticket.core.util.ui.AppButton
@@ -73,6 +78,8 @@ fun CinemaTicketScreen(
     val selectedSeatList by viewModel.selectedSeatList.collectAsState(initial = null)
 
     val packedSeatList by viewModel.packedSeatList.collectAsState(initial = null)
+
+    val statusTypeList by viewModel.statusTypeList.collectAsState()
 
     val dayList by viewModel.dayList.collectAsState()
     val selectedDay by viewModel.selectedDay.collectAsState()
@@ -126,6 +133,14 @@ fun CinemaTicketScreen(
                     index = index + 1,
                     item = item,
                     onClick = viewModel::toggleSeatSelection
+                )
+            }
+
+            items(
+                items = statusTypeList
+            ) { item ->
+                CinemaTicketStatusTypeListItem(
+                    item = item
                 )
             }
         }
@@ -230,6 +245,40 @@ fun CinemaTicketSeatListItem(
         contentDescription = null,
         tint = color
     )
+}
+
+@Composable
+fun CinemaTicketStatusTypeListItem(
+    item: CinemaTicketStatusType
+) {
+    val color = when (item) {
+        CinemaTicketStatusType.Available -> MaterialTheme.colorScheme.surface
+        CinemaTicketStatusType.Taken -> MaterialTheme.colorScheme.surfaceVariant
+        CinemaTicketStatusType.Selected -> MaterialTheme.colorScheme.primary
+    }
+
+    Row(
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+
+        Text(
+            text = item.name,
+            style = MaterialTheme.typography.w400.x2,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
 }
 
 @Composable

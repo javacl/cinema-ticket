@@ -2,6 +2,7 @@ package sample.cinema.ticket.core.util
 
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketDayModel
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketSeatModel
+import sample.cinema.ticket.features.ticket.ui.cinema.CinemaTicketStatusType
 import kotlin.random.Random
 
 object DataUtil {
@@ -22,6 +23,12 @@ object DataUtil {
 
         return list
     }
+
+    fun cinemaTicketStatusTypeList() = listOf(
+        CinemaTicketStatusType.Available,
+        CinemaTicketStatusType.Taken,
+        CinemaTicketStatusType.Selected
+    )
 
     fun cinemaTicketDayList() = listOf(
         CinemaTicketDayModel(
