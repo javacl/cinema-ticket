@@ -5,7 +5,15 @@
     <string name="error_general">A problem occurred!</string>
     <string name="error_connection">Connect to Internet</string>
 
+    <string name="msg_select_seat">Select at least one seat!</string>
+    <string name="msg_select_day">Select the day!</string>
+    <string name="msg_select_hour">Select the hour!</string>
+    <string name="msg_done_successfully">Done successfully.</string>
+
     <string name="label_retry">Retry</string>
     <string name="label_i_realized">I realized</string>
+    <string name="label_buy_tickets">Buy tickets</string>
+
+    <string name="param_tickets" formatted="false">%1$s tickets</string>
 
 </resources>

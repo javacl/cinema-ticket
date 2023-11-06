@@ -9,7 +9,6 @@ import javax.inject.Singleton
 
 @Singleton
 class TicketRepository @Inject constructor(
-    private val ticketLocalDataSource: TicketLocalDataSource,
     private val ticketRemoteDataSource: TicketRemoteDataSource,
     private val networkHandler: NetworkHandler
 ) {

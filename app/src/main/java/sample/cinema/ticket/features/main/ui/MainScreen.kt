@@ -12,12 +12,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import sample.cinema.ticket.core.util.navigation.NavigationRoutes
 import sample.cinema.ticket.core.util.snackBar.AppSnackBarHost
+import sample.cinema.ticket.core.util.snackBar.SnackBarType
 import sample.cinema.ticket.features.ticket.ui.cinema.CinemaTicketScreen
 
 @Composable
 fun MainScreen(
     mainSnackBarHostState: SnackbarHostState,
-    showMainSnackBar: (message: String, duration: SnackbarDuration) -> Unit
+    showMainSnackBar: (message: String?, type: SnackBarType, duration: SnackbarDuration) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -41,7 +42,7 @@ fun MainScreen(
                 route = NavigationRoutes.CinemaTicket.route
             ) {
                 CinemaTicketScreen(
-                    navController = navController
+                    showMainSnackBar = showMainSnackBar
                 )
             }
         }
