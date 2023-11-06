@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,6 +64,7 @@ import sample.cinema.ticket.core.theme.x1
 import sample.cinema.ticket.core.theme.x2
 import sample.cinema.ticket.core.theme.x3
 import sample.cinema.ticket.core.theme.x6
+import sample.cinema.ticket.core.util.TicketShape
 import sample.cinema.ticket.core.util.extensions.parseServerErrorMessage
 import sample.cinema.ticket.core.util.extensions.parseValidationErrorMessage
 import sample.cinema.ticket.core.util.snackBar.SnackBarType
@@ -157,11 +157,10 @@ fun CinemaTicketScreen(
                 .build(),
             contentDescription = null,
             modifier = Modifier
+                .padding(vertical = 16.dp)
                 .fillMaxWidth()
-                .aspectRatio(21f / 9f)
-                .graphicsLayer {
-                    rotationX = -45f
-                },
+                .height(100.dp)
+                .clip(TicketShape()),
             contentScale = ContentScale.Crop
         )
 
@@ -169,7 +168,8 @@ fun CinemaTicketScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            columns = GridCells.Fixed(3)
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(8.dp)
         ) {
             itemsIndexed(
                 items = packedSeatList ?: emptyList()
@@ -227,7 +227,7 @@ fun CinemaTicketPackedSeatListItem(
 
     Box(
         modifier = Modifier
-            .padding(bottom = 16.dp)
+            .padding(vertical = 8.dp)
             .fillMaxWidth()
             .height(44.dp)
             .graphicsLayer {
