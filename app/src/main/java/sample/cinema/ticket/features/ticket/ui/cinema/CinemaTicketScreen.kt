@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,14 +23,15 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import sample.cinema.ticket.R
+import sample.cinema.ticket.core.model.NetworkViewState
 import sample.cinema.ticket.core.theme.w300
 import sample.cinema.ticket.core.theme.w400
 import sample.cinema.ticket.core.theme.w500
@@ -62,14 +65,19 @@ import sample.cinema.ticket.core.theme.x1
 import sample.cinema.ticket.core.theme.x2
 import sample.cinema.ticket.core.theme.x3
 import sample.cinema.ticket.core.theme.x6
+import sample.cinema.ticket.core.util.extensions.parseServerErrorMessage
+import sample.cinema.ticket.core.util.extensions.parseValidationErrorMessage
+import sample.cinema.ticket.core.util.snackBar.SnackBarType
 import sample.cinema.ticket.core.util.ui.AppButton
 import sample.cinema.ticket.core.util.ui.AppCard
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketDayModel
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketSeatModel
+import sample.cinema.ticket.features.ticket.domain.validation.BuyCinemaTicketValidationError
 
 @Composable
 fun CinemaTicketScreen(
-    viewModel: CinemaTicketViewModel = hiltViewModel()
+    viewModel: CinemaTicketViewModel = hiltViewModel(),
+    showMainSnackBar: (message: String?, type: SnackBarType, duration: SnackbarDuration) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -86,6 +94,41 @@ fun CinemaTicketScreen(
 
     val hourList by viewModel.hourList.collectAsState()
     val selectedHour by viewModel.selectedHour.collectAsState()
+
+    val networkViewState by viewModel.networkViewState.collectAsState()
+
+    LaunchedEffect(networkViewState) {
+
+        if (networkViewState.showValidationError) {
+
+            (networkViewState.validationError as BuyCinemaTicketValidationError?)?.let {
+
+                showMainSnackBar.invoke(
+                    context.parseValidationErrorMessage(it.message),
+                    SnackBarType.Warning,
+                    SnackbarDuration.Short
+                )
+            }
+        }
+
+        if (networkViewState.showError) {
+
+            showMainSnackBar.invoke(
+                context.parseServerErrorMessage(networkViewState),
+                SnackBarType.Error,
+                SnackbarDuration.Short
+            )
+        }
+
+        if (networkViewState.showSuccess) {
+
+            showMainSnackBar.invoke(
+                context.getString(R.string.msg_done_successfully),
+                SnackBarType.Success,
+                SnackbarDuration.Short
+            )
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -137,10 +180,14 @@ fun CinemaTicketScreen(
                     onClick = viewModel::toggleSeatSelection
                 )
             }
+        }
 
-            items(
-                items = statusTypeList
-            ) { item ->
+        Row(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth()
+        ) {
+            statusTypeList.forEach { item ->
                 CinemaTicketStatusTypeListItem(
                     item = item
                 )
@@ -148,13 +195,15 @@ fun CinemaTicketScreen(
         }
 
         CinemaTicketCardItem(
+            networkViewState = networkViewState,
             selectedSeatList = selectedSeatList,
             dayList = dayList,
             selectedDay = selectedDay,
             hourList = hourList,
             selectedHour = selectedHour,
-            onDayClicked = viewModel::setSelectedDay,
-            onHourClicked = viewModel::setSelectedHour
+            onDayClick = viewModel::setSelectedDay,
+            onHourClick = viewModel::setSelectedHour,
+            onBuyClick = viewModel::buyCinemaTicket
         )
     }
 }
@@ -250,7 +299,7 @@ fun CinemaTicketSeatListItem(
 }
 
 @Composable
-fun CinemaTicketStatusTypeListItem(
+fun RowScope.CinemaTicketStatusTypeListItem(
     item: CinemaTicketStatusType
 ) {
     val color = when (item) {
@@ -261,8 +310,8 @@ fun CinemaTicketStatusTypeListItem(
 
     Row(
         modifier = Modifier
-            .padding(bottom = 16.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .weight(1f),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -285,13 +334,15 @@ fun CinemaTicketStatusTypeListItem(
 
 @Composable
 fun CinemaTicketCardItem(
+    networkViewState: NetworkViewState,
     selectedSeatList: List<CinemaTicketSeatModel>?,
     dayList: List<CinemaTicketDayModel>,
-    selectedDay: CinemaTicketDayModel?,
+    selectedDay: CinemaTicketDayModel,
     hourList: List<String>,
-    selectedHour: String?,
-    onDayClicked: (CinemaTicketDayModel) -> Unit,
-    onHourClicked: (String) -> Unit
+    selectedHour: String,
+    onDayClick: (CinemaTicketDayModel) -> Unit,
+    onHourClick: (String) -> Unit,
+    onBuyClick: () -> Unit
 ) {
     AppCard(
         modifier = Modifier
@@ -313,7 +364,7 @@ fun CinemaTicketCardItem(
                     CinemaTicketDayListItem(
                         item = item,
                         selected = item == selectedDay,
-                        onClick = onDayClicked
+                        onClick = onDayClick
                     )
                 }
             }
@@ -330,7 +381,7 @@ fun CinemaTicketCardItem(
                     CinemaTicketHourListItem(
                         item = item,
                         selected = item == selectedHour,
-                        onClick = onHourClicked
+                        onClick = onHourClick
                     )
                 }
             }
@@ -369,10 +420,10 @@ fun CinemaTicketCardItem(
                     isWrap = true,
                     textStyle = MaterialTheme.typography.w300.x3,
                     iconSize = 20.dp,
-                    wrapPadding = 16.dp
-                ) {
-
-                }
+                    wrapPadding = 16.dp,
+                    onClick = onBuyClick,
+                    loading = networkViewState.showProgress
+                )
             }
         }
     }

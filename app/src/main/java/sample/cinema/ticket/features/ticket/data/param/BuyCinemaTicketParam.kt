@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class BuyCinemaTicketParam(
-    val seatIds: List<String>,
+    val seatIds: List<Int>,
     val day: String,
     val hour: String
 )

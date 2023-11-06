@@ -14,11 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import sample.cinema.ticket.R
+import sample.cinema.ticket.core.theme.onSuccess
+import sample.cinema.ticket.core.theme.onWarning
+import sample.cinema.ticket.core.theme.success
 import sample.cinema.ticket.core.theme.w400
 import sample.cinema.ticket.core.theme.w600
+import sample.cinema.ticket.core.theme.warning
 import sample.cinema.ticket.core.theme.x2
 import sample.cinema.ticket.core.util.ui.AppCard
 
@@ -35,11 +40,39 @@ fun AppSnackBarHost(
 
             val isRetry = snackBar.visuals.duration == SnackbarDuration.Indefinite
 
+            val backgroundColor: Color
+
+            val contentColor: Color
+
+            when (snackBar.visuals.actionLabel) {
+
+                SnackBarType.Success.name -> {
+
+                    backgroundColor = MaterialTheme.colorScheme.success
+
+                    contentColor = MaterialTheme.colorScheme.onSuccess
+                }
+
+                SnackBarType.Warning.name -> {
+
+                    backgroundColor = MaterialTheme.colorScheme.warning
+
+                    contentColor = MaterialTheme.colorScheme.onWarning
+                }
+
+                else -> {
+
+                    backgroundColor = MaterialTheme.colorScheme.error
+
+                    contentColor = MaterialTheme.colorScheme.onError
+                }
+            }
+
             AppCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                backgroundColor = MaterialTheme.colorScheme.error
+                backgroundColor = backgroundColor
             ) {
                 Row(
                     modifier = Modifier
@@ -56,7 +89,7 @@ fun AppSnackBarHost(
                             .weight(1f),
                         text = snackBar.visuals.message,
                         style = MaterialTheme.typography.w600.x2,
-                        color = MaterialTheme.colorScheme.onError
+                        color = contentColor
                     )
 
                     Text(
@@ -70,7 +103,7 @@ fun AppSnackBarHost(
                             .padding(16.dp),
                         text = stringResource(id = if (isRetry) R.string.label_retry else R.string.label_i_realized),
                         style = MaterialTheme.typography.w400.x2,
-                        color = MaterialTheme.colorScheme.onError
+                        color = contentColor
                     )
                 }
             }

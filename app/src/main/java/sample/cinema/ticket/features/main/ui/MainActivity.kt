@@ -37,12 +37,13 @@ class MainActivity : BaseActivity() {
                 ) {
                     MainScreen(
                         mainSnackBarHostState = mainSnackBarHostState,
-                        showMainSnackBar = { message, duration ->
+                        showMainSnackBar = { message, type, duration ->
 
                             coroutineScope.launch {
 
                                 mainSnackBarHostState.showAppSnackBar(
                                     message = message,
+                                    type = type,
                                     duration = duration
                                 )
                             }

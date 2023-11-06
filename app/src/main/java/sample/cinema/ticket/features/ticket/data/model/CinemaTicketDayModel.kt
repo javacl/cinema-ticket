@@ -6,6 +6,6 @@ import com.squareup.moshi.JsonClass
 @Immutable
 @JsonClass(generateAdapter = true)
 data class CinemaTicketDayModel(
-    val day: String,
-    val name: String
+    val day: String = "",
+    val name: String = ""
 )
