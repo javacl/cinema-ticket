@@ -116,7 +116,9 @@ fun CinemaTicketScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(21f / 9f)
-                .clip(CircleShape),
+                .graphicsLayer {
+                    rotationX = -45f
+                },
             contentScale = ContentScale.Crop
         )
 
