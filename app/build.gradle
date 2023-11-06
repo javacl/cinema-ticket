@@ -14,8 +14,8 @@ private String generateVersionName() {
 }
 
 project.ext {
-    versionMajor = 0
-    versionMinor = 9
+    versionMajor = 1
+    versionMinor = 0
     versionPatch = 0
     minimumSdkVersion = 24
     compileAndTargetSdkVersion = 34
