@@ -40,9 +40,7 @@ fun MainScreen(
             composable(
                 route = NavigationRoutes.CinemaTicket.route
             ) {
-                CinemaTicketScreen(
-                    navController = navController
-                )
+                CinemaTicketScreen()
             }
         }
     }

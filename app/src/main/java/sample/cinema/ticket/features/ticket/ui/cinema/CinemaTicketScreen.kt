@@ -1,5 +1,6 @@
 package sample.cinema.ticket.features.ticket.ui.cinema
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,7 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,10 +42,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import sample.cinema.ticket.R
@@ -54,20 +55,20 @@ import sample.cinema.ticket.core.theme.w500
 import sample.cinema.ticket.core.theme.w600
 import sample.cinema.ticket.core.theme.w700
 import sample.cinema.ticket.core.theme.x1
-import sample.cinema.ticket.core.theme.x2
 import sample.cinema.ticket.core.theme.x3
-import sample.cinema.ticket.core.theme.x4
 import sample.cinema.ticket.core.theme.x6
+import sample.cinema.ticket.core.util.ui.AppButton
 import sample.cinema.ticket.core.util.ui.AppCard
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketDayModel
 import sample.cinema.ticket.features.ticket.data.model.CinemaTicketSeatModel
 
 @Composable
 fun CinemaTicketScreen(
-    navController: NavController,
     viewModel: CinemaTicketViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    val onBackPressDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     val selectedSeatList by viewModel.selectedSeatList.collectAsState(initial = null)
 
@@ -88,7 +89,7 @@ fun CinemaTicketScreen(
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable(onClick = navController::navigateUp)
+                .clickable { onBackPressDispatcher?.onBackPressed() }
                 .padding(8.dp)
         ) {
             Icon(
@@ -134,7 +135,9 @@ fun CinemaTicketScreen(
             dayList = dayList,
             selectedDay = selectedDay,
             hourList = hourList,
-            selectedHour = selectedHour
+            selectedHour = selectedHour,
+            onDayClicked = viewModel::setSelectedDay,
+            onHourClicked = viewModel::setSelectedHour
         )
     }
 }
@@ -235,7 +238,9 @@ fun CinemaTicketCardItem(
     dayList: List<CinemaTicketDayModel>,
     selectedDay: CinemaTicketDayModel?,
     hourList: List<String>,
-    selectedHour: String?
+    selectedHour: String?,
+    onDayClicked: (CinemaTicketDayModel) -> Unit,
+    onHourClicked: (String) -> Unit
 ) {
     AppCard(
         modifier = Modifier
@@ -245,7 +250,7 @@ fun CinemaTicketCardItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp)
+                .padding(vertical = 16.dp)
         ) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -256,14 +261,15 @@ fun CinemaTicketCardItem(
                 ) { item ->
                     CinemaTicketDayListItem(
                         item = item,
-                        selected = item == selectedDay
+                        selected = item == selectedDay,
+                        onClick = onDayClicked
                     )
                 }
             }
 
             LazyRow(
                 modifier = Modifier
-                    .padding(top = 24.dp)
+                    .padding(top = 16.dp)
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 12.dp)
             ) {
@@ -272,8 +278,49 @@ fun CinemaTicketCardItem(
                 ) { item ->
                     CinemaTicketHourListItem(
                         item = item,
-                        selected = item == selectedHour
+                        selected = item == selectedHour,
+                        onClick = onHourClicked
                     )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(end = 16.dp, start = 16.dp, top = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "$100.00",
+                        style = MaterialTheme.typography.w700.x6,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = stringResource(
+                            R.string.param_tickets,
+                            selectedSeatList?.size ?: 0
+                        ),
+                        style = MaterialTheme.typography.w400.x1,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                AppButton(
+                    text = stringResource(id = R.string.label_buy_tickets),
+                    iconResource = R.drawable.ic_card,
+                    height = 40.dp,
+                    isWrap = true,
+                    textStyle = MaterialTheme.typography.w300.x3,
+                    iconSize = 20.dp,
+                    wrapPadding = 16.dp
+                ) {
+
                 }
             }
         }
@@ -283,7 +330,8 @@ fun CinemaTicketCardItem(
 @Composable
 fun CinemaTicketDayListItem(
     item: CinemaTicketDayModel,
-    selected: Boolean
+    selected: Boolean,
+    onClick: (CinemaTicketDayModel) -> Unit
 ) {
     val modifier: Modifier
     val contentColor: Color
@@ -308,6 +356,7 @@ fun CinemaTicketDayListItem(
             .padding(horizontal = 4.dp)
             .clip(MaterialTheme.shapes.large)
             .then(modifier)
+            .clickable { onClick.invoke(item) }
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -328,7 +377,8 @@ fun CinemaTicketDayListItem(
 @Composable
 fun CinemaTicketHourListItem(
     item: String,
-    selected: Boolean
+    selected: Boolean,
+    onClick: (String) -> Unit
 ) {
     val modifier: Modifier
     val contentColor: Color
@@ -353,6 +403,7 @@ fun CinemaTicketHourListItem(
             .padding(horizontal = 4.dp)
             .clip(MaterialTheme.shapes.large)
             .then(modifier)
+            .clickable { onClick.invoke(item) }
             .padding(8.dp),
         text = item,
         style = MaterialTheme.typography.w500.x3,

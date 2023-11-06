@@ -7,5 +7,8 @@
 
     <string name="label_retry">Retry</string>
     <string name="label_i_realized">I realized</string>
+    <string name="label_buy_tickets">Buy tickets</string>
+
+    <string name="param_tickets" formatted="false">%1$s tickets</string>
 
 </resources>

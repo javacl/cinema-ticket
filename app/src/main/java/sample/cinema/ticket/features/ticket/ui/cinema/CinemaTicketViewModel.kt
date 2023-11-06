@@ -52,4 +52,12 @@ class CinemaTicketViewModel @Inject constructor(
 
         seatList.value = list
     }
+
+    fun setSelectedDay(value: CinemaTicketDayModel) {
+        _selectedDay.value = value
+    }
+
+    fun setSelectedHour(value: String) {
+        _selectedHour.value = value
+    }
 }
